@@ -61,7 +61,7 @@ $jobs = mysqli_query($conn, $query);
                   </form>
                 </div>
                 <div class="col text-end">
-                  <form action="deleteJob.php" method="GET">
+                  <form action="deleteJob.php" method="POST">
                     <input type="hidden" name="id" value="<?= $job['id'] ?>">
                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                   </form>

@@ -10,6 +10,12 @@
           <a class="nav-link active" aria-current="page" href="jobs.php">Home</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="students.php">Students</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="companies.php">Companies</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="addJob.php">Add Job</a>
         </li>
         <li class="nav-item">
