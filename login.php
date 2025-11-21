@@ -1,20 +1,21 @@
 <?php
+session_start();
   include('reusable/conn.php');
   include('functions.php');
 
   if(isset($_POST['login'])){
     $query = 'SELECT * 
-              FROM users
-              WHERE email = "' . $_POST['email'] . '"
-              AND password = "' . md5($_POST['password']) . '"
-              LIMIT 1';
-    $result = mysqli_query($connect, $query);
+          FROM users
+          WHERE email = "' . $_POST['email'] . '"
+          AND password = "' . $_POST['password'] . '"
+          LIMIT 1';
+    $result = mysqli_query($conn, $query);
     if(mysqli_num_rows($result)){
       $record = mysqli_fetch_assoc($result);
       $_SESSION['id'] = $record['id'];
       $_SESSION['name'] = $record['name'];
       $_SESSION['email'] = $record['email'];
-      header('Location: index.php');
+      header('Location: jobs.php');
       die();
     } else{
       set_message('No records found!', 'danger');

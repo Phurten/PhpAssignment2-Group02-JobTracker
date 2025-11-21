@@ -1,6 +1,12 @@
 <?php
-  $connect = mysqli_connect('localhost', 'root', 'root', 'schools');
-  
-  if(!$connect){
-    die("Connection Failed: " . mysqli_connect_error());
-  }
+$host = "localhost";
+$user = "root";
+$pass = 'root'; 
+$db = "jobtracker";
+
+$conn = mysqli_connect($host, $user, $pass, $db);
+
+if (!$conn) {
+    die("Database connection failed");
+}
+?>

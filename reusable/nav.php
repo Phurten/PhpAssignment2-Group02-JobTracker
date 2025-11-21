@@ -7,13 +7,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="index.php">Home</a>
+          <a class="nav-link active" aria-current="page" href="jobs.php">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="add.php">Add School</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="addStudent.php">Add Student</a>
+          <a class="nav-link" href="addJob.php">Add Job</a>
         </li>
         <li class="nav-item">
           <a class="nav-link"  href="logout.php">Logout</a>
