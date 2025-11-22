@@ -3,11 +3,22 @@ include 'functions.php';
 secure();
 require 'reusable/conn.php';
 
-$companiesQuery = "SELECT companies.*, COUNT(jobs.id) AS job_count
-                   FROM companies
-                   LEFT JOIN jobs ON jobs.company_id = companies.id
-                   GROUP BY companies.id
-                   ORDER BY companies.name";
+if (is_admin()) {
+    //admin can see all companies
+    $companiesQuery = "SELECT companies.*, COUNT(jobs.id) AS job_count
+                       FROM companies
+                       LEFT JOIN jobs ON jobs.company_id = companies.id
+                       GROUP BY companies.id
+                       ORDER BY companies.name";
+} else {
+    //regular users can only see companies they have jobs with
+    $companiesQuery = "SELECT DISTINCT companies.*, COUNT(jobs.id) AS job_count
+                       FROM companies
+                       INNER JOIN jobs ON jobs.company_id = companies.id
+                       WHERE jobs.user_id = " . $_SESSION['id'] . "
+                       GROUP BY companies.id
+                       ORDER BY companies.name";
+}
 
 $companies = mysqli_query($conn, $companiesQuery);
 ?>
@@ -28,8 +39,8 @@ $companies = mysqli_query($conn, $companiesQuery);
   <div class="container">
     <div class="row">
       <div class="col">
-        <h1 class="display-4 mt-5 mb-3">Companies</h1>
-        <p class="text-muted">Review and maintain the list of employers in the tracker.</p>
+        <h1 class="display-4 mt-5 mb-3"><?= is_admin() ? 'All Companies (Admin)' : 'My Companies' ?></h1>
+        <p class="text-muted"><?= is_admin() ? 'Review and maintain the list of employers in the tracker.' : 'Companies associated with your job applications.' ?></p>
       </div>
     </div>
   </div>
@@ -72,10 +83,14 @@ $companies = mysqli_query($conn, $companiesQuery);
                     </td>
                     <td><?= (int) $company['job_count']; ?></td>
                     <td class="text-end">
+                      <?php if (is_admin()): ?>
                       <form action="deleteCompany.php" method="POST" class="d-inline" onsubmit="return confirm('Delete this company?');">
                         <input type="hidden" name="id" value="<?= (int) $company['id']; ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                       </form>
+                      <?php else: ?>
+                      <span class="text-muted">View only</span>
+                      <?php endif; ?>
                     </td>
                   </tr>
                 <?php endwhile; ?>

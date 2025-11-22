@@ -20,17 +20,28 @@ require('reusable/conn.php');
   <div class="container">
     <div class="row">
       <div class="col">
-        <h1 class="display-4 mt-5 mb-5">All Jobs</h1>
+        <h1 class="display-4 mt-5 mb-5"><?= is_admin() ? 'All Jobs (Admin View)' : 'My Jobs' ?></h1>
       </div>
     </div>
   </div>
 </div>
 
 <?php
-$query = "SELECT jobs.*, companies.name AS companyName, users.username 
-          FROM jobs
-          LEFT JOIN companies ON jobs.company_id = companies.id
-          LEFT JOIN users ON jobs.user_id = users.id";
+if (is_admin()) {
+    //admin can see all jobs
+    $query = "SELECT jobs.*, companies.name AS companyName, users.username 
+              FROM jobs
+              LEFT JOIN companies ON jobs.company_id = companies.id
+              LEFT JOIN users ON jobs.user_id = users.id
+              ORDER BY jobs.date_applied DESC";
+} else {
+    //regular users can only see their own jobs
+    $query = "SELECT jobs.*, companies.name AS companyName, users.username 
+              FROM jobs
+              LEFT JOIN companies ON jobs.company_id = companies.id
+              LEFT JOIN users ON jobs.user_id = users.id
+              WHERE jobs.user_id = " . $_SESSION['id'];
+}
 $jobs = mysqli_query($conn, $query);
 ?>
 
@@ -48,12 +59,15 @@ $jobs = mysqli_query($conn, $query);
             <div class="card-body">
               <h5 class="card-title"><?= $job['title'] ?></h5>
               <p class="card-text">Company: <?= $job['companyName'] ?></p>
-              <p class="card-text">User: <?= $job['username'] ?></p>
+              <?php if (is_admin()): ?>
+                <p class="card-text">User: <?= $job['username'] ?></p>
+              <?php endif; ?>
               <span class="badge bg-secondary"><?= $job['status'] ?></span>
               <span class="badge bg-info"><?= $job['date_applied'] ?></span>
             </div>
             <div class="card-footer">
               <div class="row">
+                <?php if (is_admin() || $job['user_id'] == $_SESSION['id']): ?>
                 <div class="col">
                   <form action="updateJob.php">
                     <input type="hidden" name="id" value="<?= $job['id'] ?>">
@@ -66,6 +80,11 @@ $jobs = mysqli_query($conn, $query);
                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                   </form>
                 </div>
+                <?php else: ?>
+                <div class="col">
+                  <span class="text-muted">View only</span>
+                </div>
+                <?php endif; ?>
               </div>
             </div>
           </div>

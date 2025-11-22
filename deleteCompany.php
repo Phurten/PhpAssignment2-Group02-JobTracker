@@ -1,6 +1,14 @@
 <?php
 require 'functions.php';
 secure();
+
+//only admins can delete companies
+if (!is_admin()) {
+    set_message('Access denied. Admin privileges required.', 'danger');
+    header('Location: companies.php');
+    exit;
+}
+
 require 'reusable/conn.php';
 
 function redirectCompany(string $message, string $class = 'danger'): void {
