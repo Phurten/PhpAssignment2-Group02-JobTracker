@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 18, 2025 at 05:25 PM
+-- Generation Time: Nov 23, 2025 at 12:26 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -90,7 +90,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password`, `email`) VALUES
 (1, 'phurten', 'password123', 'phurten@example.com'),
 (2, 'ankit', 'password123', 'ankit@example.com'),
-(3, 'thamil', 'password123', 'thamil@example.com');
+(3, 'thamil', 'password123', 'thamil@example.com'),
+(4, 'admin', 'adminpassword123', 'admin@example.com');
 
 --
 -- Indexes for dumped tables
@@ -131,13 +132,13 @@ ALTER TABLE `companies`
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

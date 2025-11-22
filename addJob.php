@@ -1,15 +1,23 @@
 <?php
 include('functions.php');
+secure();
 include('reusable/conn.php');
 
 $companies = mysqli_query($conn, "SELECT * FROM companies");
-$users = mysqli_query($conn, "SELECT * FROM users");
+if (is_admin()) {
+    $users = mysqli_query($conn, "SELECT * FROM users");
+}
 
 $error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $user_id     = $_POST['user_id'];
+    if (is_admin() && isset($_POST['user_id'])) {
+        $user_id = $_POST['user_id']; //admin can assign to any user
+    } else {
+        $user_id = $_SESSION['id']; //regular users can only add for themselves
+    }
+    
     $company_id  = $_POST['company_id'];
     $title       = trim($_POST['title']);
     $description = trim($_POST['description']);
@@ -17,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status      = $_POST['status'];
     $date_applied = $_POST['date_applied'];
 
-    if (empty($user_id) || empty($company_id) || empty($title) || empty($description) || empty($location) || empty($status) || empty($date_applied)) {
+    if (empty($company_id) || empty($title) || empty($description) || empty($location) || empty($status) || empty($date_applied)) {
         $error_message = 'Please fill all fields!';
     } else {
         $query = "INSERT INTO jobs (user_id, company_id, title, description, location, status, date_applied)
@@ -77,19 +85,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form action="addJob.php" method="POST">
 
+          <?php if (is_admin()): ?>
           <div class="mb-3">
-            <label for="user_id" class="form-label">Select User</label>
+            <label for="user_id" class="form-label">Select User (Admin Only)</label>
             <select name="user_id" required class="form-control">
+              <option value="">Choose a user...</option>
               <?php while ($user = mysqli_fetch_assoc($users)) : ?>
                 <option value="<?= $user['id'] ?>"><?= $user['username'] ?></option>
               <?php endwhile; ?>
             </select>
           </div>
+          <?php endif; ?>
 
           <div class="mb-3">
             <label for="company_id" class="form-label">Select Company</label>
             <select name="company_id" required class="form-control">
-              <?php while ($company = mysqli_fetch_assoc($companies)) : ?>
+              <option value="">Choose a company...</option>
+              <?php 
+              mysqli_data_seek($companies, 0); // Reset pointer
+              while ($company = mysqli_fetch_assoc($companies)) : ?>
                 <option value="<?= $company['id'] ?>"><?= $company['name'] ?></option>
               <?php endwhile; ?>
             </select>

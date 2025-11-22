@@ -1,6 +1,14 @@
 <?php
 include 'functions.php';
 secure();
+
+//only admins can access this page
+if (!is_admin()) {
+    set_message('Access denied. Admin privileges required.', 'danger');
+    header('Location: jobs.php');
+    exit;
+}
+
 require 'reusable/conn.php';
 
 $studentsQuery = "SELECT users.*, COUNT(jobs.id) AS job_count
@@ -17,7 +25,7 @@ $students = mysqli_query($conn, $studentsQuery);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Students & Users</title>
+  <title>Users Management</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -28,8 +36,8 @@ $students = mysqli_query($conn, $studentsQuery);
   <div class="container">
     <div class="row">
       <div class="col">
-        <h1 class="display-4 mt-5 mb-3">Students</h1>
-        <p class="text-muted">Manage portal users and remove inactive accounts.</p>
+        <h1 class="display-4 mt-5 mb-3">Users Management</h1>
+        <p class="text-muted">Manage job tracker users and remove inactive accounts.</p>
       </div>
     </div>
   </div>
@@ -62,7 +70,7 @@ $students = mysqli_query($conn, $studentsQuery);
                     <td><?= htmlspecialchars($student['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                     <td><?= (int) $student['job_count']; ?></td>
                     <td class="text-end">
-                      <form action="deleteStudent.php" method="POST" class="d-inline" onsubmit="return confirm('Delete this student?');">
+                      <form action="deleteUser.php" method="POST" class="d-inline" onsubmit="return confirm('Delete this user?');">
                         <input type="hidden" name="id" value="<?= (int) $student['id']; ?>">
                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                       </form>
@@ -71,7 +79,7 @@ $students = mysqli_query($conn, $studentsQuery);
                 <?php endwhile; ?>
               <?php else: ?>
                 <tr>
-                  <td colspan="4" class="text-center text-muted">No students found.</td>
+                  <td colspan="4" class="text-center text-muted">No users found.</td>
                 </tr>
               <?php endif; ?>
             </tbody>
