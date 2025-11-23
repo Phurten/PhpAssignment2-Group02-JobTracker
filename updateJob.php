@@ -7,11 +7,17 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
     $id = $_GET['id'];
     
     if (is_admin()) {
-        //admin can edit any job
-        $query = "SELECT * FROM jobs WHERE id = $id";
+        // Admin can edit any job
+        $query = "SELECT jobs.*, companies.name as company_name, companies.website as company_website, companies.industry as company_industry 
+                  FROM jobs 
+                  LEFT JOIN companies ON jobs.company_id = companies.id 
+                  WHERE jobs.id = $id";
     } else {
-        //regular users can only edit their own jobs
-        $query = "SELECT * FROM jobs WHERE id = $id AND user_id = " . $_SESSION['id'];
+        // Regular users can only edit their own jobs
+        $query = "SELECT jobs.*, companies.name as company_name, companies.website as company_website, companies.industry as company_industry 
+                  FROM jobs 
+                  LEFT JOIN companies ON jobs.company_id = companies.id 
+                  WHERE jobs.id = $id AND jobs.user_id = " . $_SESSION['id'];
     }
     
     $result = mysqli_query($conn, $query);
@@ -27,30 +33,63 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST['id'];
-    $company_id = $_POST['company_id'];
+    $company_name = trim($_POST['company_name']);
+    $company_website = trim($_POST['company_website']);
+    $company_industry = trim($_POST['company_industry']);
     $title = $_POST['title'];
     $desc = $_POST['description'];
     $location = $_POST['location'];
     $status = $_POST['status'];
     $date_applied = $_POST['date_applied'];
 
+    // First, handle company update/creation
+    $company_id = null;
+    
+    // Check if company already exists with this name
+    $check_company = "SELECT id FROM companies WHERE name = '" . mysqli_real_escape_string($conn, $company_name) . "'";
+    $company_result = mysqli_query($conn, $check_company);
+    
+    if (mysqli_num_rows($company_result) > 0) {
+        // Company exists, get its ID and update it
+        $company_row = mysqli_fetch_assoc($company_result);
+        $company_id = $company_row['id'];
+        
+        // Update existing company
+        $update_company = "UPDATE companies SET 
+                          website = '" . mysqli_real_escape_string($conn, $company_website) . "',
+                          industry = '" . mysqli_real_escape_string($conn, $company_industry) . "'
+                          WHERE id = $company_id";
+        mysqli_query($conn, $update_company);
+    } else {
+        // Company doesn't exist, create new one
+        $insert_company = "INSERT INTO companies (name, website, industry) VALUES (
+            '" . mysqli_real_escape_string($conn, $company_name) . "', 
+            '" . mysqli_real_escape_string($conn, $company_website) . "', 
+            '" . mysqli_real_escape_string($conn, $company_industry) . "'
+        )";
+        
+        if (mysqli_query($conn, $insert_company)) {
+            $company_id = mysqli_insert_id($conn);
+        }
+    }
+
     if (is_admin()) {
-        //admin can update any job
+        // Admin can update any job
         $query = "UPDATE jobs SET 
                     company_id = '$company_id',
-                    title = '$title',
-                    description = '$desc',
-                    location = '$location',
+                    title = '" . mysqli_real_escape_string($conn, $title) . "',
+                    description = '" . mysqli_real_escape_string($conn, $desc) . "',
+                    location = '" . mysqli_real_escape_string($conn, $location) . "',
                     status = '$status',
                     date_applied = '$date_applied'
                   WHERE id = $id";
     } else {
-        //regular users can only update their own jobs
+        // Regular users can only update their own jobs
         $query = "UPDATE jobs SET 
                     company_id = '$company_id',
-                    title = '$title',
-                    description = '$desc',
-                    location = '$location',
+                    title = '" . mysqli_real_escape_string($conn, $title) . "',
+                    description = '" . mysqli_real_escape_string($conn, $desc) . "',
+                    location = '" . mysqli_real_escape_string($conn, $location) . "',
                     status = '$status',
                     date_applied = '$date_applied'
                   WHERE id = $id AND user_id = " . $_SESSION['id'];
@@ -59,16 +98,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = mysqli_query($conn, $query);
 
     if ($result && mysqli_affected_rows($conn) > 0) {
-        set_message('Job updated successfully!', 'success');
+        set_message('Job and company updated successfully!', 'success');
         header('Location: jobs.php');
         exit;
     } else {
         set_message('Failed to update job or you do not have permission.', 'danger');
     }
 }
-
-//companies for the dropdown
-$companies = mysqli_query($conn, "SELECT * FROM companies");
 ?>
 
 <!DOCTYPE html>
@@ -92,33 +128,44 @@ $companies = mysqli_query($conn, "SELECT * FROM companies");
 
       <input type="hidden" name="id" value="<?php echo $job['id']; ?>">
 
+      <h5 class="mb-3">Company Information</h5>
+      
       <div class="mb-3">
-        <label class="form-label">Company</label>
-        <select class="form-control" name="company_id">
-          <?php 
-          mysqli_data_seek($companies, 0); // Reset pointer
-          while ($c = mysqli_fetch_assoc($companies)) { ?>
-            <option value="<?php echo $c['id']; ?>"
-              <?php echo ($c['id'] == $job['company_id']) ? "selected" : ""; ?>>
-              <?php echo $c['name']; ?>
-            </option>
-          <?php } ?>
-        </select>
+        <label class="form-label">Company Name *</label>
+        <input type="text" class="form-control" name="company_name" required
+               value="<?php echo htmlspecialchars($job['company_name'] ?? ''); ?>">
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Job Title</label>
+        <label class="form-label">Company Website</label>
+        <input type="url" class="form-control" name="company_website"
+               value="<?php echo htmlspecialchars($job['company_website'] ?? ''); ?>" 
+               placeholder="https://company.com">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Industry</label>
+        <input type="text" class="form-control" name="company_industry"
+               value="<?php echo htmlspecialchars($job['company_industry'] ?? ''); ?>" 
+               placeholder="e.g., Technology, Finance, Healthcare">
+      </div>
+
+      <hr class="my-4">
+      <h5 class="mb-3">Job Information</h5>
+
+      <div class="mb-3">
+        <label class="form-label">Job Title *</label>
         <input type="text" class="form-control" name="title"
                value="<?php echo htmlspecialchars($job['title']); ?>" required>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Description</label>
-        <textarea class="form-control" name="description" required><?php echo htmlspecialchars($job['description']); ?></textarea>
+        <label class="form-label">Description *</label>
+        <textarea class="form-control" name="description" required rows="3"><?php echo htmlspecialchars($job['description']); ?></textarea>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Location</label>
+        <label class="form-label">Location *</label>
         <input type="text" class="form-control" name="location"
                value="<?php echo htmlspecialchars($job['location']); ?>" required>
       </div>
