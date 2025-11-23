@@ -3,7 +3,6 @@ include('functions.php');
 secure();
 include('reusable/conn.php');
 
-$companies = mysqli_query($conn, "SELECT * FROM companies");
 if (is_admin()) {
     $users = mysqli_query($conn, "SELECT * FROM users");
 }
@@ -13,31 +12,64 @@ $error_message = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (is_admin() && isset($_POST['user_id'])) {
-        $user_id = $_POST['user_id']; //admin can assign to any user
+        $user_id = $_POST['user_id']; // Admin can assign to any user
     } else {
-        $user_id = $_SESSION['id']; //regular users can only add for themselves
+        $user_id = $_SESSION['id']; // Regular users can only add for themselves
     }
     
-    $company_id  = $_POST['company_id'];
-    $title       = trim($_POST['title']);
+    // Company information
+    $company_name = trim($_POST['company_name']);
+    $company_website = trim($_POST['company_website']);
+    $company_industry = trim($_POST['company_industry']);
+    
+    // Job information
+    $title = trim($_POST['title']);
     $description = trim($_POST['description']);
-    $location    = trim($_POST['location']);
-    $status      = $_POST['status'];
+    $location = trim($_POST['location']);
+    $status = $_POST['status'];
     $date_applied = $_POST['date_applied'];
 
-    if (empty($company_id) || empty($title) || empty($description) || empty($location) || empty($status) || empty($date_applied)) {
-        $error_message = 'Please fill all fields!';
+    if (empty($company_name) || empty($title) || empty($description) || empty($location) || empty($status) || empty($date_applied)) {
+        $error_message = 'Please fill all required fields!';
     } else {
-        $query = "INSERT INTO jobs (user_id, company_id, title, description, location, status, date_applied)
-                  VALUES ('$user_id', '$company_id', '$title', '$description', '$location', '$status', '$date_applied')";
-        $result = mysqli_query($conn, $query);
-
-        if ($result) {
-            set_message('Job added successfully!', 'success');
-            header('Location: jobs.php');
-            exit;
+        
+        // First, check if company already exists
+        $check_company = "SELECT id FROM companies WHERE name = '" . mysqli_real_escape_string($conn, $company_name) . "'";
+        $company_result = mysqli_query($conn, $check_company);
+        
+        if (mysqli_num_rows($company_result) > 0) {
+            // Company exists, use existing ID
+            $company_row = mysqli_fetch_assoc($company_result);
+            $company_id = $company_row['id'];
         } else {
-            $error_message = "Error: " . mysqli_error($conn);
+            // Company doesn't exist, create new one
+            $insert_company = "INSERT INTO companies (name, website, industry) VALUES (
+                '" . mysqli_real_escape_string($conn, $company_name) . "', 
+                '" . mysqli_real_escape_string($conn, $company_website) . "', 
+                '" . mysqli_real_escape_string($conn, $company_industry) . "'
+            )";
+            
+            if (mysqli_query($conn, $insert_company)) {
+                $company_id = mysqli_insert_id($conn);
+            } else {
+                $error_message = "Error creating company: " . mysqli_error($conn);
+            }
+        }
+        
+        // If we have a company_id, create the job
+        if (!$error_message && isset($company_id)) {
+            $job_query = "INSERT INTO jobs (user_id, company_id, title, description, location, status, date_applied)
+                          VALUES ('$user_id', '$company_id', '" . mysqli_real_escape_string($conn, $title) . "', 
+                          '" . mysqli_real_escape_string($conn, $description) . "', '" . mysqli_real_escape_string($conn, $location) . "', 
+                          '$status', '$date_applied')";
+            
+            if (mysqli_query($conn, $job_query)) {
+                set_message('Job and company added successfully!', 'success');
+                header('Location: jobs.php');
+                exit;
+            } else {
+                $error_message = "Error creating job: " . mysqli_error($conn);
+            }
         }
     }
 }
@@ -66,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <div class="container">
     <div class="row">
       <div class="col">
-        <h1 class="display-4 mt-5 mb-5">Add Job</h1>
+        <h1 class="display-4 mt-5 mb-5">Add New Job Application</h1>
       </div>
     </div>
   </div>
@@ -97,31 +129,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
           <?php endif; ?>
 
+          <h5 class="mb-3">Company Information</h5>
+          
           <div class="mb-3">
-            <label for="company_id" class="form-label">Select Company</label>
-            <select name="company_id" required class="form-control">
-              <option value="">Choose a company...</option>
-              <?php 
-              mysqli_data_seek($companies, 0); // Reset pointer
-              while ($company = mysqli_fetch_assoc($companies)) : ?>
-                <option value="<?= $company['id'] ?>"><?= $company['name'] ?></option>
-              <?php endwhile; ?>
-            </select>
+            <label for="company_name" class="form-label">Company Name *</label>
+            <input type="text" class="form-control" name="company_name" required 
+                   placeholder="Enter company name">
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Job Title</label>
-            <input type="text" class="form-control" name="title">
+            <label for="company_website" class="form-label">Company Website</label>
+            <input type="url" class="form-control" name="company_website" 
+                   placeholder="https://company.com (optional)">
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea class="form-control" name="description"></textarea>
+            <label for="company_industry" class="form-label">Industry</label>
+            <input type="text" class="form-control" name="company_industry" 
+                   placeholder="e.g., Technology, Finance, Healthcare (optional)">
+          </div>
+
+          <hr class="my-4">
+          <h5 class="mb-3">Job Information</h5>
+
+          <div class="mb-3">
+            <label class="form-label">Job Title *</label>
+            <input type="text" class="form-control" name="title" required 
+                   placeholder="e.g., Software Developer Intern">
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Location</label>
-            <input type="text" class="form-control" name="location">
+            <label class="form-label">Description *</label>
+            <textarea class="form-control" name="description" required rows="3"
+                      placeholder="Job description, requirements, etc."></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Location *</label>
+            <input type="text" class="form-control" name="location" required 
+                   placeholder="e.g., Toronto, ON or Remote">
           </div>
 
           <div class="mb-3">
