@@ -1,0 +1,270 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+}
+body:not(.landing-page) {
+    background: #fff !important;
+    background-image: none !important;
+    color: #111;
+    /* Remove flex centering for non-landing pages */
+    display: block;
+    align-items: unset;
+    justify-content: unset;
+    margin-left: 210px;
+}
+body.landing-page {
+    background: url('assets/bg-image.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+body.login-page {
+    background: #fff !important;
+    background-image: none !important;
+    color: #111;
+    margin-left: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+body.login-page .container.fluid,
+body.login-page .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+.hero {
+    padding: 0.5rem 2rem;
+    text-align: center;
+    color: #111;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+}
+.hero h1 {
+    margin-top: 0;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+.hero p {
+    font-size: 1.3rem;
+    margin-bottom: 3rem;
+}
+.hero a {
+    display: inline-block;
+    padding: 0.75rem 2.5rem;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+.hero a:hover {
+    background: #333;
+}
+.hero-btn, .hero a {
+    display: inline-block;
+    padding: 0.75rem 2.5rem;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+.hero-btn:hover, .hero a:hover {
+    background: #333;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Set overlay to white so modal background is white if modal-content is smaller */
+    background: #fff;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+    position: relative;
+    min-width: 340px;
+    max-width: 95vw;
+    width: 600px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+    color: #111;
+}
+.modal-content h1, .modal-content h2, .modal-content h3, .modal-content label, .modal-content p {
+    color: #111;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+}
+.modal-content a, .modal-content button, .modal-content input[type="submit"] {
+    display: inline-block;
+    padding: 0.75rem 2.5rem;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+.modal-content a:hover, .modal-content button:hover, .modal-content input[type="submit"]:hover {
+    background: #333;
+}
+.close {
+    color: #fff;
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 10;
+}
+.close:hover {
+    color: #ff5252;
+}
+.login-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+}
+.form-control {
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus, .form-control:hover {
+    border-color: #111;
+    box-shadow: 0 0 0 2px rgba(17,17,17,0.15);
+    background: #fff;
+    color: #111;
+}
+.sidebar-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 210px;
+    height: 100vh;
+    background: #111;
+    padding-top: 2rem;
+    z-index: 200;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+.sidebar-menu li {
+    width: 100%;
+}
+.sidebar-link {
+    display: block;
+    width: 100%;
+    color: #fff !important;
+    font-family: 'Stack Sans Headline', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: 0 16px 16px 0;
+    transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+}
+.sidebar-link:hover, .sidebar-link.active {
+    background: #fff;
+    color: #111 !important;
+    text-decoration: none;
+}
+@media (max-width: 500px) {
+    .modal-content {
+        width: 95vw;
+        min-width: unset;
+        padding: 1rem 0.5rem 0.5rem 0.5rem;
+    }
+    .login-iframe {
+        height: 300px;
+    }
+}
+@media (max-width: 600px) {
+    .menu-link {
+        margin-bottom: 0.5rem;
+    }
+}
+@media (max-width: 650px) {
+    .modal-content {
+        width: 98vw;
+        height: 98vh;
+        min-width: unset;
+        padding: 1rem 0.5rem 0.5rem 0.5rem;
+    }
+    .login-iframe {
+        height: 90vw;
+    }
+}
+@media (max-width: 700px) {
+    .sidebar-navbar {
+        width: 100vw;
+        height: auto;
+        position: static;
+        flex-direction: row;
+        padding-top: 0;
+        box-shadow: none;
+    }
+    .sidebar-menu {
+        display: flex;
+        flex-direction: row;
+        width: 100vw;
+    }
+    .sidebar-menu li {
+        width: auto;
+    }
+    .sidebar-link {
+        border-radius: 0;
+        padding: 1rem 1rem;
+        font-size: 1rem;
+    }
+    body:not(.landing-page) {
+        margin-left: 0;
+    }
+}

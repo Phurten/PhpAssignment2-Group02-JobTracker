@@ -3,6 +3,19 @@ require 'functions.php';
 secure();
 require 'reusable/conn.php';
 
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Job</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<?php
+
 $jobId = 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
@@ -47,3 +60,6 @@ if (mysqli_stmt_errno($stmt)) {
 mysqli_stmt_close($stmt);
 header('Location: jobs.php');
 exit;
+?>
+</body>
+</html>

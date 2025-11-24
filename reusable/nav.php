@@ -1,29 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Job Tracker</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="jobs.php">My Jobs</a>
-        </li>
-        <?php if (is_admin()): ?>
-        <li class="nav-item">
-          <a class="nav-link" href="users.php">Users</a>
-        </li>
-        <?php endif; ?>
-        <li class="nav-item">
-          <a class="nav-link" href="companies.php">Companies</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="addJob.php">Add Job</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link"  href="logout.php">Logout</a>
-        </li>
-      </ul>
-    </div>
-  </div>
+<nav class="sidebar-navbar">
+  <ul class="sidebar-menu">
+    <li><a class="sidebar-link" href="index.php">Home</a></li>
+    <li><a class="sidebar-link" href="jobs.php">Jobs</a></li>
+    <li><a class="sidebar-link" href="companies.php">Companies</a></li>
+    <li><a class="sidebar-link" href="addJob.php">Add Job</a></li>
+    <?php if (function_exists('is_admin') && is_admin()): ?>
+      <li><a class="sidebar-link" href="users.php">Users</a></li>
+    <?php endif; ?>
+    <li><a class="sidebar-link" href="logout.php">Logout</a></li>
+  </ul>
 </nav>
