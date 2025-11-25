@@ -34,80 +34,79 @@ $companies = mysqli_query($conn, $companiesQuery);
   <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<?php include 'reusable/nav.php'; ?>
-
-<div class="container-fluid">
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h1 class="display-4 mt-5 mb-3"><?= is_admin() ? 'All Companies (Admin)' : 'My Companies' ?></h1>
-        <p class="text-muted"><?= is_admin() ? 'Review and maintain the list of employers in the tracker.' : 'Companies associated with your job applications.' ?></p>
+  <?php include 'reusable/nav.php'; ?>
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <h1 class="display-4 mt-5 mb-3"><?= is_admin() ? 'All Companies (Admin)' : 'My Companies' ?></h1>
+            <p class="text-muted"><?= is_admin() ? 'Review and maintain the list of employers in the tracker.' : 'Companies associated with your job applications.' ?></p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="container-fluid">
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <?php get_message(); ?>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="table-responsive">
-          <table class="table table-striped align-middle">
-            <thead>
-              <tr>
-                <th scope="col">Company</th>
-                <th scope="col">Industry</th>
-                <th scope="col">Website</th>
-                <th scope="col">Jobs</th>
-                <th scope="col" class="text-end">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php if ($companies && mysqli_num_rows($companies) > 0): ?>
-                <?php while ($company = mysqli_fetch_assoc($companies)): ?>
+    <div class="container-fluid">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <?php get_message(); ?>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead>
                   <tr>
-                    <td><?= htmlspecialchars($company['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?= htmlspecialchars($company['industry'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td>
-                      <?php if (!empty($company['website'])): ?>
-                        <a href="<?= htmlspecialchars($company['website'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
-                          <?= htmlspecialchars($company['website'], ENT_QUOTES, 'UTF-8'); ?>
-                        </a>
-                      <?php else: ?>
-                        <span class="text-muted">N/A</span>
-                      <?php endif; ?>
-                    </td>
-                    <td><?= (int) $company['job_count']; ?></td>
-                    <td class="text-end">
-                      <?php if (is_admin()): ?>
-                      <form action="deleteCompany.php" method="POST" class="d-inline" onsubmit="return confirm('Delete this company?');">
-                        <input type="hidden" name="id" value="<?= (int) $company['id']; ?>">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                      </form>
-                      <?php else: ?>
-                      <span class="text-muted">View only</span>
-                      <?php endif; ?>
-                    </td>
+                    <th scope="col">Company</th>
+                    <th scope="col">Industry</th>
+                    <th scope="col">Website</th>
+                    <th scope="col">Jobs</th>
+                    <th scope="col" class="text-end">Actions</th>
                   </tr>
-                <?php endwhile; ?>
-              <?php else: ?>
-                <tr>
-                  <td colspan="5" class="text-center text-muted">No companies found.</td>
-                </tr>
-              <?php endif; ?>
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  <?php if ($companies && mysqli_num_rows($companies) > 0): ?>
+                    <?php while ($company = mysqli_fetch_assoc($companies)): ?>
+                      <tr>
+                        <td><?= htmlspecialchars($company['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?= htmlspecialchars($company['industry'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td>
+                          <?php if (!empty($company['website'])): ?>
+                            <a href="<?= htmlspecialchars($company['website'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                              <?= htmlspecialchars($company['website'], ENT_QUOTES, 'UTF-8'); ?>
+                            </a>
+                          <?php else: ?>
+                            <span class="text-muted">N/A</span>
+                          <?php endif; ?>
+                        </td>
+                        <td><?= (int) $company['job_count']; ?></td>
+                        <td class="text-end">
+                          <?php if (is_admin()): ?>
+                          <form action="deleteCompany.php" method="POST" class="d-inline" onsubmit="return confirm('Delete this company?');">
+                            <input type="hidden" name="id" value="<?= (int) $company['id']; ?>">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                          </form>
+                          <?php else: ?>
+                          <span class="text-muted">View only</span>
+                          <?php endif; ?>
+                        </td>
+                      </tr>
+                    <?php endwhile; ?>
+                  <?php else: ?>
+                    <tr>
+                      <td colspan="5" class="text-center text-muted">No companies found.</td>
+                    </tr>
+                  <?php endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
 </body>
 </html>

@@ -5,25 +5,27 @@ session_start();
 
   if(isset($_POST['login'])){
     $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    $password = $_POST['password'];
     
-    $query = 'SELECT * 
-          FROM users
-          WHERE email = "' . $email . '"
-          AND password = "' . $password . '"
-          LIMIT 1';
-    
+    $query = 'SELECT * FROM users WHERE email = "' . $email . '" LIMIT 1';
     $result = mysqli_query($conn, $query);
     
     if(!$result) {
         set_message('Database error: ' . mysqli_error($conn), 'danger');
     } elseif(mysqli_num_rows($result)){
       $record = mysqli_fetch_assoc($result);
-      $_SESSION['id'] = $record['id'];
-      $_SESSION['username'] = $record['username'];
-      $_SESSION['email'] = $record['email'];
-      header('Location: jobs.php');
-      die();
+      // Try password_verify first, fallback to plain text for legacy users
+      if (password_verify($password, $record['password']) || $password === $record['password']) {
+        $_SESSION['id'] = $record['id'];
+        $_SESSION['username'] = $record['username'];
+        $_SESSION['email'] = $record['email'];
+        header('Location: jobs.php');
+        die();
+      } else {
+        set_message('Invalid email or password. Please check your credentials.', 'danger');
+        header('Location: login.php');
+        die();
+      }
     } else{
       set_message('Invalid email or password. Please check your credentials.', 'danger');
       header('Location: login.php');
@@ -47,7 +49,6 @@ session_start();
   <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="login-page">
-  <!-- Sidebar navbar intentionally omitted on login.php for correct layout -->
   <div class="container fluid">
     <div class="container">
       <div class="row">
