@@ -2,6 +2,15 @@
 
 A modern web application for tracking job applications, built with PHP, MySQL, and Bootstrap. JobTracker helps students organize, filter, and manage their job search efficiently, with a clean interface.
 
+## Demo Credentials
+
+- **Admin**
+  - Email: admin@example.com
+  - Password: adminpassword123
+- **User (Phurten)**
+  - Email: phurten@example.com
+  - Password: password123
+
 ## Features
 
 ### Core Functionality
@@ -57,4 +66,4 @@ A modern web application for tracking job applications, built with PHP, MySQL, a
 - **Thamil**: Implemented login/logout authentication and all delete functions (users, jobs, companies).
 - **Phurten Jang Sherpa**: Implemented all styles, Add User, and admin-only features.
 
-Web Development Project – HTTP5225  
+Web Development Project – HTTP5225
