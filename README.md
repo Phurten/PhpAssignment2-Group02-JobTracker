@@ -1,5 +1,7 @@
 # JobTracker - Group 2 Assignment
 
+**Live Demo:** [https://jobtracker.free.nf](https://jobtracker.free.nf)
+
 A modern web application for tracking job applications, built with PHP, MySQL, and Bootstrap. JobTracker helps students organize, filter, and manage their job search efficiently, with a clean interface.
 
 ## Demo Credentials
