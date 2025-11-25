@@ -10,7 +10,18 @@ if (!is_admin()) {
 }
 
 require 'reusable/conn.php';
-
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Company</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Headline:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<?php
 function redirectCompany(string $message, string $class = 'danger'): void {
     set_message($message, $class);
     header('Location: companies.php');
@@ -67,3 +78,6 @@ if (mysqli_stmt_affected_rows($deleteStmt) === 0) {
 
 mysqli_stmt_close($deleteStmt);
 redirectCompany('Company deleted successfully.', 'success');
+?>
+</body>
+</html>
